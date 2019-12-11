@@ -35,6 +35,7 @@ import kotlinx.android.synthetic.main.layout_list.*
 class ListFragment : Fragment() {
 
     lateinit var adapter: ListAdapter
+    var list: ArrayList<String>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +47,25 @@ class ListFragment : Fragment() {
 
     }
 
+
+    companion object {
+        @JvmStatic
+        fun newInstance(list: ArrayList<String>): ListFragment {
+            val fragment = ListFragment()
+            val bundle = Bundle()
+            bundle.putStringArrayList("list", list)
+            fragment.arguments = bundle
+
+            return fragment
+        }
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        list = arguments?.getStringArrayList("list") ?: ArrayList()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,6 +74,6 @@ class ListFragment : Fragment() {
         list_recyclerView.setHasFixedSize(true)
         adapter = ListAdapter()
         list_recyclerView.adapter = adapter
-        adapter.setNewData(listOf("1", "1", "1", "1", "1", "1", "1", "1", "1", "1"))
+        adapter.setNewData(list)
     }
 }

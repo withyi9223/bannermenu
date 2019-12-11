@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -19,30 +18,40 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var adapter: TabAdapter
     var list = ArrayList<Fragment>()
+    var views = ArrayList<View>()
+    var params1: LinearLayout.LayoutParams? = null
+    var params2: LinearLayout.LayoutParams? = null
+
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pager)
-
-        list.add(ListFragment())
-        list.add(ListFragment())
+        val datas = ArrayList<String>()
+        for (i in 0..29) {
+            datas.add("title$i")
+        }
+        val data = Utils.splitList(datas, 10)
+        data?.forEachIndexed { index, arrayList ->
+            list.add(ListFragment.newInstance(arrayList))
+        }
         adapter = TabAdapter(supportFragmentManager, list)
         tab_viewPager.adapter = adapter
-        var v1 = View(this)
-        var v2 = View(this)
-        val params1 =
-            LinearLayout.LayoutParams(dip2px(this, 12f), RelativeLayout.LayoutParams.MATCH_PARENT)
-        val params2 =
-            LinearLayout.LayoutParams(dip2px(this, 8f), RelativeLayout.LayoutParams.MATCH_PARENT)
-        v1.layoutParams = params1
-        v2.layoutParams = params2
-        tab_layout.addView(v1)
-        tab_layout.addView(v2)
-        params1.rightMargin = dip2px(this, 3f)
-        params2.leftMargin = dip2px(this, 3f)
-        v1.setBackgroundColor(Color.WHITE)
-        v2.setBackgroundColor(Color.BLACK)
+        list.forEach { _ ->
+            val v = View(this)
+            v.setBackgroundColor(Color.WHITE)
+            views.add(v)
+            tab_layout.addView(v)
+        }
+        params1 =
+            LinearLayout.LayoutParams(dip2px(this, 15f), RelativeLayout.LayoutParams.MATCH_PARENT)
+        params2 =
+            LinearLayout.LayoutParams(dip2px(this, 4f), RelativeLayout.LayoutParams.MATCH_PARENT)
+        params1?.leftMargin = dip2px(this, 3f)
+        params1?.rightMargin = dip2px(this, 3f)
+        params2?.leftMargin = dip2px(this, 3f)
+        params2?.rightMargin = dip2px(this, 3f)
+        setSelect(0)
         tab_viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
@@ -57,25 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                when (position) {
-                    0 -> {
-                        v1.setBackgroundColor(Color.WHITE)
-                        v2.setBackgroundColor(Color.BLACK)
-                        v1.layoutParams = params1
-                        v2.layoutParams = params2
-                        params1.rightMargin = dip2px(this@MainActivity, 3f)
-                        params2.leftMargin = dip2px(this@MainActivity, 3f)
-                    }
-                    1 -> {
-                        v2.setBackgroundColor(Color.WHITE)
-                        v1.setBackgroundColor(Color.BLACK)
-                        v2.layoutParams = params1
-                        v1.layoutParams = params2
-                        params2.rightMargin = dip2px(this@MainActivity, 3f)
-                        params1.leftMargin = dip2px(this@MainActivity, 3f)
-                    }
-                }
-
+                setSelect(position)
             }
 
         })
@@ -97,18 +88,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int, isBottom: Boolean) {
-                Log.e("ddd1",position.toString())
-                Log.e("ddd_isBottom",isBottom.toString())
+
             }
 
             override fun onPageRelease(isNext: Boolean, position: Int) {
-                Log.e("ddd_isNext",isNext.toString())
-                Log.e("ddd2",position.toString())
+
             }
 
         })
 
 
+    }
+
+    fun setSelect(int: Int) {
+        list.forEachIndexed { index, fragment ->
+            if (index == int) {
+                views[index].layoutParams = params1
+            } else {
+                views[index].layoutParams = params2
+            }
+        }
     }
 
     fun dip2px(context: Context, dpValue: Float): Int {
