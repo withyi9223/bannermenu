@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pager)
         val datas = ArrayList<String>()
-        for (i in 0..29) {
+        for (i in 0 until 35) {
             datas.add("title$i")
         }
         val data = Utils.splitList(datas, 10)

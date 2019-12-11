@@ -39,11 +39,14 @@ public class Utils {
 
         if (null == source || source.size() == 0 || n <= 0)
             return null;
-
         ArrayList<ArrayList<T>> result = new ArrayList<>();
-
         int sourceSize = source.size();
-        int size = (source.size() / n) ;
+        int size;
+        if (source.size() % n == 0) {
+            size = source.size() / n;
+        } else {
+            size = (source.size() / n) + 1;
+        }
         for (int i = 0; i < size; i++) {
             ArrayList<T> subset = new ArrayList<>();
             for (int j = i * n; j < (i + 1) * n; j++) {
@@ -55,6 +58,4 @@ public class Utils {
         }
         return result;
     }
-    
-
 }
